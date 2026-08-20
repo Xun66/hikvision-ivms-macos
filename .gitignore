@@ -1,0 +1,12 @@
+.env
+.DS_Store
+.claude/settings.local.json
+
+# Xcode
+DerivedData/
+*.xcuserdata/
+*.xcuserstate
+
+# Build and distribution artifacts
+build/
+dist/

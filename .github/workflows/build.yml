@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - 'codex/**'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    name: macOS Release
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Build
+        run: |
+          xcodebuild \
+            -project MyIVMS.xcodeproj \
+            -scheme MyIVMS \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGN_STYLE=Manual \
+            build
+
+      - name: Ad-hoc sign app
+        run: |
+          codesign --force --deep --sign - \
+            build/DerivedData/Build/Products/Release/MyIVMS.app
+          codesign --verify --deep --strict --verbose=2 \
+            build/DerivedData/Build/Products/Release/MyIVMS.app
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/DerivedData/Build/Products/Release/MyIVMS.app \
+            dist/MyIVMS-macOS.zip
+          du -h dist/MyIVMS-macOS.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: MyIVMS-macOS
+          path: dist/MyIVMS-macOS.zip
+          if-no-files-found: error
