@@ -1,8 +1,7 @@
 # Hikvision iVMS for macOS
 
 一个超轻量的原生 macOS 海康摄像头/NVR 客户端。Release app 约 **2 MB**，
-ad-hoc 签名，只使用 Apple 系统框架构建。没有 Electron，没有 VLC，没有
-ffmpeg bundle，也没有厂商 SDK runtime。
+ad-hoc 签名，只使用 Apple 系统框架构建，适合想要一个简洁本地客户端的场景。
 
 [English README](README.md)
 
@@ -16,8 +15,6 @@ ffmpeg bundle，也没有厂商 SDK runtime。
     <td align="center">按天回放、时间轴缩放、倍速和录像下载</td>
   </tr>
 </table>
-
-上面的截图使用合成摄像头画面，不包含真实家庭或私有监控内容。
 
 ## 功能
 
@@ -37,7 +34,7 @@ ffmpeg bundle，也没有厂商 SDK runtime。
 - **极轻量：** Release app 约 2 MB。
 - **原生：** 使用 SwiftUI、Network.framework、VideoToolbox、AVFoundation、
   AudioToolbox/AVAudioEngine 等系统能力。
-- **小体积分发：** 不需要厂商 SDK 安装器、浏览器插件、VLC、ffmpeg 或其他媒体运行时。
+- **小体积分发：** 保持安装包简单，依赖系统自带的媒体和网络能力。
 - **直接协议：** RTSP over TCP interleaved RTP + 海康 ISAPI。
 
 ## 兼容性
@@ -75,6 +72,9 @@ ditto -c -k --sequesterRsrc --keepParent \
   build/DerivedData/Build/Products/Release/MyIVMS.app \
   MyIVMS.app.zip
 ```
+
+GitHub Actions 会把 zip 作为 workflow artifact 上传。推送 `v0.1.0` 这类版本
+标签时，会自动创建 GitHub Release 并附上同一个 zip。
 
 项目使用 Xcode file-system-synchronized groups，因此 `MyIVMS/` 下的源文件会由
 project 自动纳入。
@@ -115,9 +115,8 @@ MyIVMS/
 ## 安全说明
 
 - 密码保存在 macOS Keychain。
-- app 不会把设备凭据嵌入 RTSP URL。
-- 录像下载会直接流式写入磁盘，不会把整个文件先读进内存。
-- app 不包含 SOCKS 或 HTTP 代理功能。
+- 录像下载直接流式写入磁盘，适合处理较大的录像文件。
+- 设备连接和录像回放都在本机直接完成，配置保存在本地。
 
 ## 限制
 

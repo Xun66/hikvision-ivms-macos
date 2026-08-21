@@ -5,8 +5,13 @@ on:
     branches:
       - main
       - 'codex/**'
+    tags:
+      - 'v*'
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   macos:
@@ -53,3 +58,14 @@ jobs:
           name: MyIVMS-macOS
           path: dist/MyIVMS-macOS.zip
           if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            dist/MyIVMS-macOS.zip \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "MyIVMS ${GITHUB_REF_NAME}" \
+            --notes "Ad-hoc signed macOS build. The app is ultra-thin at about 2 MB."
