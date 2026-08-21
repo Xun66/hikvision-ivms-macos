@@ -17,9 +17,6 @@ No Electron, no VLC, no ffmpeg bundle, no SDK runtime.
   </tr>
 </table>
 
-The screenshots above use synthetic camera frames, not private or real home
-footage.
-
 ## Features
 
 - Live view for Hikvision cameras and NVR channels.
@@ -78,6 +75,9 @@ ditto -c -k --sequesterRsrc --keepParent \
   build/DerivedData/Build/Products/Release/MyIVMS.app \
   MyIVMS.app.zip
 ```
+
+GitHub Actions also publishes the zip as a workflow artifact. Pushing a version
+tag such as `v0.1.0` creates a GitHub Release with the same zip attached.
 
 The project uses Xcode file-system-synchronized groups, so source files under
 `MyIVMS/` are picked up by the project automatically.
